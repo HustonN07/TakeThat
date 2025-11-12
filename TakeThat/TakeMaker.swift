@@ -8,11 +8,27 @@
 import SwiftUI
 
 struct TakeMaker: View {
+    @ObservedObject var sharedData: SharedData   // 👈 receive the shared object
+    @State private var newPost = ""
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            TextField("Enter something", text: $newPost)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+            
+            Button("Add Post") {
+                sharedData.creating = false
+                sharedData.posts.append(Post(text: newPost, likes: 0))   // 👈 append to the shared array
+                newPost = ""                       // optional: clear field
+            }
+            .buttonStyle(.borderedProminent)
+            .padding()
+        }
+        .navigationTitle("TakeMaker")
     }
 }
 
 #Preview {
-    TakeMaker()
+    TakeMaker(sharedData: SharedData()) // 👈 this fixes the preview
 }

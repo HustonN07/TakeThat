@@ -9,53 +9,47 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    @StateObject var sharedData = SharedData()   // 👈 create one shared instance
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+        NavigationView {
+            VStack {
+                ScrollView{
+                    ForEach($sharedData.posts) { $post in
+                        PostView(post: $post)   // pass the binding down
+                    }
+                }
+                
+                
+                Spacer()
+                if(sharedData.creating){
+                    TakeMaker(sharedData: sharedData)
+                        .labelsHidden()
+                }
+                else{
+                    Button {
+                        sharedData.creating = true
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Image("plus")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 75)
+                            .padding(.leading)
                     }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+//                NavigationLink("Make a Take") {
+//                    TakeMaker(sharedData: sharedData)   // 👈 pass it here
+//                }
+//                .padding()
             }
         }
     }
+    
+    
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        
 }

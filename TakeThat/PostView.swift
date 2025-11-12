@@ -8,11 +8,35 @@
 import SwiftUI
 
 struct PostView: View {
+    @Binding var post: Post   // <-- Binding so the button can mutate it
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            HStack {
+                Text(post.text).padding(.leading, 20)
+                Spacer()
+            }
+            HStack {
+                Button { post.liked() } label: {
+                    Image("heartEmpty")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50)
+                        .padding(.leading)
+                }
+                Text("\(post.likes)")
+                    .font(.title)
+                    .fontWeight(.medium)
+                    .padding(.leading, 3)
+                Spacer()
+            }
+        }
     }
 }
 
 #Preview {
-    PostView()
+    // Preview needs a Binding; use .constant(...)
+    PostView(post: .constant(Post(text: "hi", likes: 0)))
 }
+
+
