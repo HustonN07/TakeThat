@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 
+
+
 struct ContentView: View {
     @StateObject var sharedData = SharedData()   // 👈 create one shared instance
     
