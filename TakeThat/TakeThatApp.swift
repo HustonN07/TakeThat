@@ -28,6 +28,20 @@ struct YourApp: App {
         ContentView()
       }
     }
+      @StateObject var authViewModel = AuthViewModel()
+
+      var body: some Scene {
+          WindowGroup {
+              if authViewModel.user == nil {
+                  LoginView()
+                      .environmentObject(authViewModel)
+              } else {
+                  FeedView()
+                      .environmentObject(authViewModel)
+              }
+          }
+      }
+
   }
 }
 

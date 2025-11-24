@@ -39,7 +39,11 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() {
-        try? Auth.auth().signOut()
-        self.user = nil
-    }
+            do {
+                try Auth.auth().signOut()
+                user = nil
+            } catch {
+                print("Error signing out: \(error)")
+            }
+        }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 
 
@@ -21,7 +22,17 @@ struct ContentView: View {
                         PostView(post: $post)   // pass the binding down
                     }
                 }
-                
+                Button("Sign Out") {
+                    try? Auth.auth().signOut()
+                }
+                .padding()
+                Button("Sign Out") {
+                    AuthViewModel.signOut()
+                }
+                @EnvironmentObject var authViewModel: AuthViewModel
+
+
+
                 
                 Spacer()
                 if(sharedData.creating){
