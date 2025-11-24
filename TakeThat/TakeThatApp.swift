@@ -16,7 +16,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     return true
   }
 }
-
 @main
 struct YourApp: App {
   // register app delegate for Firebase setup
@@ -33,25 +32,24 @@ struct YourApp: App {
 }
 
 
-
 struct TakeThatApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var auth = AuthViewModel()
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+    var body: some Scene {
+        WindowGroup {
+            if auth.user != nil {
+                ContentView() // user is logged in → show feed
+            } else {
+                LoginView(auth: auth) // user not logged in → show login
+            }
         }
-    }()
+    }
+}
+
 
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
     }
-}
