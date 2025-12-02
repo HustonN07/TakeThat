@@ -17,18 +17,11 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                ScrollView{
-                    ForEach($sharedData.posts) { $post in
-                        PostView(post: $post)   // pass the binding down
-                    }
-                }
                 Button("Sign Out") {
                     try? Auth.auth().signOut()
                 }
                 .padding()
-                Button("Sign Out") {
-                    AuthViewModel.signOut()
-                }
+               
                 @EnvironmentObject var authViewModel: AuthViewModel
 
 

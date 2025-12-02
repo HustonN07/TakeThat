@@ -1,54 +1,41 @@
-//
-//  LoginView.swift
-//  TakeThat
-//
-//  Created by Max Khomutin on 11/24/25.
-//
-
-import Foundation
 import SwiftUI
 
 struct LoginView: View {
-    @ObservedObject var auth = AuthViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
 
     var body: some View {
         VStack(spacing: 20) {
+            Text("Login")
+                .font(.largeTitle)
+
             TextField("Email", text: $email)
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
 
             SecureField("Password", text: $password)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
 
             Button("Sign In") {
-                auth.signIn(email: email, password: password) { error in
-                    if let error {
+                authViewModel.signIn(email: email, password: password) { error in
+                    if let error = error {
                         errorMessage = error.localizedDescription
                     }
                 }
             }
             .buttonStyle(.borderedProminent)
 
-            Button("Sign Up") {
-                auth.signUp(email: email, password: password) { error in
-                    if let error {
+            Button("Create Account") {
+                authViewModel.signUp(email: email, password: password) { error in
+                    if let error = error {
                         errorMessage = error.localizedDescription
                     }
                 }
             }
-            .padding(.top, 5)
 
             if !errorMessage.isEmpty {
-                Text(errorMessage)
-                    .foregroundColor(.red)
+                Text(errorMessage).foregroundColor(.red)
             }
         }
         .padding()
