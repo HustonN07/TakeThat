@@ -2,33 +2,44 @@ import Foundation
 import FirebaseAuth
 
 class AuthViewModel: ObservableObject {
-    @Published var user: User?
+    @Published var isLoggedIn: Bool = false
+    @Published var errorMessage: String?
+    @Published var isLoading: Bool = false
     
-    init() {
-        self.user = Auth.auth().currentUser
-        Auth.auth().addStateDidChangeListener { _, user in
-            self.user = user
+    func login(email: String, password: String) {
+        errorMessage = nil
+        isLoading = true
+        
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            self.isLoading = false
+            if let error = error {
+                self.errorMessage = error.localizedDescription
+                return
+            }
+            self.isLoggedIn = true
         }
     }
     
-    func signIn(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { _, error in
-            completion(error)
-        }
-    }
-    
-    func signUp(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { _, error in
-            completion(error)
+    func signUp(email: String, password: String) {
+        errorMessage = nil
+        isLoading = true
+        
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            self.isLoading = false
+            if let error = error {
+                self.errorMessage = error.localizedDescription
+                return
+            }
+            self.isLoggedIn = true
         }
     }
     
     func signOut() {
         do {
             try Auth.auth().signOut()
-            self.user = nil
+            isLoggedIn = false
         } catch {
-            print("Error signing out: \(error.localizedDescription)")
+            errorMessage = error.localizedDescription
         }
     }
 }
